@@ -1,17 +1,18 @@
 {{-- AIに質問するView --}}
 <x-appHplc-layout>
 <div class="lg:w-full lg:flex">
+  <div id="spinner" class="spinner"></div> {{-- ローディングスピナー用のタグ --}}
     <section class="lg:w-1/2 text-gray-900 body-font">
         <div class="container px-5 lg:py-40 py-12 mx-auto">
             <h1 class="ml-2 text-4xl"><span class="text-pink-500 font-bold">A</span>sk a Question About HPLC Analysis Data</h1>
             <div class="ml-2 h-1 w-20 bg-pink-500 rounded"></div>
             <br>
-            <form action="{{ route('search') }}" method="POST">
+            <form action="{{ route('search') }}" method="POST" onsubmit="showSpinner()">
                 @csrf
                 <label class="ml-2 text-gray-600 " for="query">Enter your question:</label>
                 <textarea class="ml-2 pl-2 w-full min-h-40 rounded-lg border border-pink-500" type="text" id="query" name="query" required></textarea>
                 <div class="flex justify-end">
-                    <button class="rounded-md bg-sky-500 py-2 px-3 text-gray-50 hover:bg-sky-700 active:scale-95 active:shadow-lg transition-transform duration-100"  type="submit">ASK!</button>
+                    <button class="rounded-md bg-sky-500 py-2 px-3 mt-2 text-gray-50 hover:bg-sky-700 active:scale-95 active:shadow-lg transition-transform duration-100"  type="submit">ASK!</button>
                 </div>
             </form>
         </div>

@@ -1,5 +1,6 @@
 <x-appHplc-layout>
     <section class="text-gray-900 body-font">
+  <div id="spinner" class="spinner"></div> {{-- ローディングスピナー用のタグ --}}
         <div class="container mx-auto mt-5 max-w-full">
                 <div class="xl:flex xl:w-full">
                     <div class="xl:w-3/5">
@@ -21,7 +22,7 @@
                         <div class="ml-12 mr-12">
                             <div class="card-body">
                                 <h5 class="text-xl">Ask a Follow-up Question :</h5>
-                                <form method="POST" action="{{ route('askAgain') }}">
+                                <form method="POST" action="{{ route('askAgain') }}" onsubmit="showSpinner()">
                                     @csrf
                                     <div class="form-group">
                                         <textarea class="pl-2 w-full min-h-40 rounded-lg border border-pink-500" type="text" id="followupQuestion" name="followupQuestion" required></textarea>
@@ -29,7 +30,7 @@
                                     <input type="hidden" name="previousQuestion" value="{{ $question }}">
                                     <input type="hidden" name="previousResponse" value="{{ $aiResponse }}">
                                     <div class="flex justify-end w-full">
-                                        <button type="submit" class="rounded-md bg-sky-500 py-2 px-3 text-gray-50 hover:bg-sky-700 active:scale-95 active:shadow-lg transition-transform duration-100">Ask Again</button>
+                                        <button type="submit" class="rounded-md bg-sky-500 py-2 px-3 mt-2 text-gray-50 hover:bg-sky-700 active:scale-95 active:shadow-lg transition-transform duration-100">Ask Again</button>
                                     </div>
                                 </form>
                             </div>

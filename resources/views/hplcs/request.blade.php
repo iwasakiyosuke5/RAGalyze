@@ -1,6 +1,7 @@
 {{-- AIにpngデータを要約依頼するview --}}
 <x-appHplc-layout>
     <div class="lg:w-full lg:flex px-3">
+        <div id="spinner" class="spinner"></div> {{-- ローディングスピナー用のタグ --}}
         <section class="lg:w-2/5 text-gray-900 body-font">
             <div class="container px-5 lg:py-40 py-12 mx-auto">
                 <h1 class="ml-2 text-4xl"><span class="text-pink-500 font-bold">R</span>egister HPLC Chromatogram</h1>
@@ -9,12 +10,12 @@
                 <div class="container px-5 pt-16 mx-auto">
                     <div class="text-center">
                         <h1 class="ml-2 text-pink-500"></h1>
-                        {{-- <form action="{{ route('convert.png') }}" method="POST" enctype="multipart/form-data">
+                        {{-- <form action="{{ route('convert.png') }}" method="POST" enctype="multipart/form-data" onsubmit="showSpinner()">
                             @csrf
                             <input class="ml-2" type="file" name="image_file" accept="image/png" placeholder="gsg" required>
                             <button class="rounded-md bg-sky-500 py-2 px-3 text-gray-50 hover:bg-sky-700" type="submit">Request AI Summary</button>
                         </form> --}}
-                        <form action="{{ route('convert.png') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('convert.png') }}" method="POST" enctype="multipart/form-data" onsubmit="showSpinner()">
                             @csrf
                             <div class="file-input-container my-2">
                                 <label for="file" class="text-2xl custom-file-label border-2 border-pink-500 rounded py-2 px-3 cursor-pointer hover:bg-pink-200">Click And Choose PNG:</label>
@@ -85,5 +86,6 @@
             }
         }
     </script>
+
 
 </x-appHplc-layout>

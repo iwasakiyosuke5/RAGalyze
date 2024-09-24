@@ -90,7 +90,7 @@
                                     <textarea class=" w-full rounded-md border-2 border-pink-500" name="text_data" id="" cols="" rows="24">{{ $textData }}</textarea>
                                     <input type="hidden" name="file_path" value=>
                                     <div class="grid place-items-end">
-                                        <button class="rounded-md bg-sky-500 p-2 w-1/3 text-gray-50 hover:bg-sky-700 text-lg" type="submit">Refresh Data!</button>
+                                        <button class="rounded-md bg-sky-500 mt-2 p-2 w-1/3 text-gray-50 hover:bg-sky-700 text-lg" type="submit">Refresh Data!</button>
                                     </div>
                                     
                                 </form>
@@ -101,7 +101,7 @@
                                     @method('DELETE') 
                                     <input type="hidden" name="file_path" value="{{ $post->file_path }}">
                                     <div class="grid place-items-end">
-                                        <button class="rounded-md bg-rose-500 p-2  w-1/3 hover:bg-rose-700 text-lg" type="submit">Delete Data!</button>
+                                        <button class="rounded-md bg-rose-500 p-2 w-1/3 hover:bg-rose-700 text-lg" type="submit">Delete Data!</button>
                                     </div>
                                 </form>
                             </div>
