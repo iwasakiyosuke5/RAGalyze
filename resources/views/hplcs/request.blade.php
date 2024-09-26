@@ -15,7 +15,7 @@
                             <input class="ml-2" type="file" name="image_file" accept="image/png" placeholder="gsg" required>
                             <button class="rounded-md bg-sky-500 py-2 px-3 text-gray-50 hover:bg-sky-700" type="submit">Request AI Summary</button>
                         </form> --}}
-                        <form action="{{ route('convert.png') }}" method="POST" enctype="multipart/form-data" onsubmit="showSpinner()">
+                        <form action="{{ route('convert.png') }}" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit()">
                             @csrf
                             <div class="file-input-container my-2">
                                 <label for="file" class="text-2xl custom-file-label border-2 border-pink-500 rounded py-2 px-3 cursor-pointer hover:bg-pink-200">Click And Choose PNG:</label>
@@ -84,6 +84,28 @@
             } else {
                 fileNameDisplay.textContent = 'No file chosen';
             }
+        }
+
+function validateFileName() {
+            const fileInput = document.getElementById('file');
+            const fileName = fileInput.files[0].name;
+            const validPattern = /^[a-zA-Z0-9._-]+$/;
+
+            if (!validPattern.test(fileName)) {
+                alert('Invalid file name. Please use only alphanumeric characters, -, and _.');
+                return false;
+            }
+
+            return true;
+        }
+
+        function handleFormSubmit() {
+            if (!validateFileName()) {
+                return false;
+            }
+
+            showSpinner();
+            return true;
         }
     </script>
 

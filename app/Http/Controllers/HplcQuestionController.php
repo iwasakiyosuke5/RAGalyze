@@ -135,9 +135,19 @@ class HplcQuestionController extends Controller
         $aiResponse = $this->askAI($query, $context);
         
 
-        $aiResponseWithLinks = preg_replace(
+        // $aiResponseWithLinks = preg_replace(
+        //     '~(https?://[^\s]+|uploads/\S+\.\w+)~', // URLやファイルパスの正規表現
+        //     '<a href="$1" class="text-sky-500 hover:text-sky-700" target="_blank">$1</a>',
+        //     $aiResponse
+        // );
+
+        $aiResponseWithLinks = preg_replace_callback(
             '~(https?://[^\s]+|uploads/\S+\.\w+)~', // URLやファイルパスの正規表現
-            '<a href="$1" class="text-sky-500 hover:text-sky-700" target="_blank">$1</a>',
+            function ($matches) {
+                $url = $matches[0]; // マッチしたURLやファイルパス全体
+                $fileName = basename($url); // ファイル名部分を取得
+                return '<a href="' . $url . '" class="text-sky-500 hover:text-sky-700" target="_blank">' . $fileName . '</a>';
+            },
             $aiResponse
         );
 
@@ -215,9 +225,9 @@ class HplcQuestionController extends Controller
                         **FormatA**: If multiple records exist, summarize up to three records in a clean.:
                             <table>
                                 <tr><th>Date</th>   <th class="pl-2">Code</th>   <th class="pl-2">Column Name</th>      <th class="pl-2">Main Peak Purity</th> <th class="pl-2">File_Path</th></tr>
-                                <tr><td>{date1}</td><td class="pl-2>{code}</td>  <td class="pl-2">{column_name1}</td>   <td class="pl-2">{purity1}%</td>       <td class="pl-2 text-xs">(File_Path_url1)</td></tr>
-                                <tr><td>{date2}</td><td class="pl-2>{code}</td>  <td class="pl-2">{column_name2}</td>   <td class="pl-2">{purity2}%</td>       <td class="pl-2 text-xs">(File_Path_url2)</td></tr>
-                                <tr><td>{date3}</td><td class="pl-2>{code}</td>  <td class="pl-2">{column_name3}</td>   <td class="pl-2">{purity3}%</td>       <td class="pl-2 text-xs">(File_Path_url3)</td></tr>
+                                <tr><td>{date1}</td><td class="pl-2>{code}</td>  <td class="pl-2">{column_name1}</td>   <td class="pl-2 text-center">{purity1}%</td>       <td class="pl-2 text-xs">(File_Path_url1)</td></tr>
+                                <tr><td>{date2}</td><td class="pl-2>{code}</td>  <td class="pl-2">{column_name2}</td>   <td class="pl-2 text-center">{purity2}%</td>       <td class="pl-2 text-xs">(File_Path_url2)</td></tr>
+                                <tr><td>{date3}</td><td class="pl-2>{code}</td>  <td class="pl-2">{column_name3}</td>   <td class="pl-2 text-center">{purity3}%</td>       <td class="pl-2 text-xs">(File_Path_url3)</td></tr>
                             </table>
 
                         **FormatB**: If there is only one record, please indicate it as follows.:

@@ -10,21 +10,35 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 
 class hplcRecordController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $resultsCount = HplcResult::count();
-        $recent30s=HplcQuestion::orderBy('created_at','desc')->take(30)->paginate(10);
+        // $recent30s=HplcQuestion::orderBy('created_at','desc')->take(30)->paginate(10);
+        $recent30s = HplcQuestion::orderBy('created_at', 'desc')->take(30)->get();
+        
+        $perPage = 10; // 1ページあたりの表示件数
+        $currentPage = LengthAwarePaginator::resolveCurrentPage(); // 現在のページを取得
+        $currentItems = $recent30s->slice(($currentPage - 1) * $perPage, $perPage)->all(); // 現在のページのアイテムを取得
+        $paginatedItems = new LengthAwarePaginator(
+            $currentItems, // 現在のページのデータ
+            $recent30s->count(), // 全データ数
+            $perPage, // 1ページあたりの表示件数
+            $currentPage, // 現在のページ
+            ['path' => $request->url(), 'query' => $request->query()] // ページネーションリンクのパスとクエリ
+        );
+
         $years = HplcResult::selectRaw('YEAR(created_at) as year') 
             ->groupBy('year')   // 重複を削除
             ->orderby('year', 'desc')   // 降順
             ->pluck('year'); // 1つのカラムのみ取得
         $departments = User::distinct()->pluck('department');   
 
-        return view('hplcs/record', compact('resultsCount','recent30s','years', 'departments'));
+        return view('hplcs/record', compact('resultsCount','paginatedItems', 'years', 'departments'));
     }
 
     public function departmentCount(Request $request)

@@ -28,7 +28,7 @@
                         <p class="text-xl mb-5">1. Recent AI Queries 30</p>
                     </div>
                     <div>
-                        @if($recent30s->count())
+                        @if($paginatedItems->count())
                         <div class="text-rap overflow-x-auto">
                             <table class="min-w-full table-auto"> <!-- ここでテーブルを追加 -->
                                 <thead>
@@ -38,17 +38,21 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($recent30s as $recent30)
+                                @foreach($paginatedItems as $recent30)
                                 <tr class="{{ $loop->iteration % 2 == 0 ? 'bg-sky-50' : 'bg-gray-50' }}">
                                     <td class="text-center border w-1/6 px-2 py-2 text-xs">{{ $recent30->user->name }} ({{ $recent30->user->department }}) </td>
-                                    <td class="border px-4 py-2 text-xs">{{ $recent30->query }}</td>
+                                    <td class="border px-4 py-2 text-xs">            @if($recent30->query)
+                                        {{ $recent30->query }}
+                                    @else
+                                        <span class="text-red-500">No Query Found</span>
+                                    @endif</td>
                                 </tr>
                                 @endforeach
                                 </tbody>
                             </table> <!-- テーブルの終了タグ -->
 
                             <div class="my-2">
-                                {{ $recent30s->links('vendor.pagination.customRecord-tailwind') }}
+                                {{ $paginatedItems->links('vendor.pagination.customRecord-tailwind') }}
                             </div>
 
                         </div>
