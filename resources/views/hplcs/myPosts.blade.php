@@ -22,8 +22,8 @@
                             
         
                         </div>
-
                         <br>
+
                         <div class="flex mx-2 rounded-md border-2 border-sky-500">
                             @php
                             $id = Auth::user()->id; // ログインユーザーのIDを取得
@@ -32,6 +32,22 @@
                             <div class="rounded-lg border p-4 bg-white w-full">
                             <h3 class="text-gray-900">{{Auth::user()->name}} san's Posts</h3>
                             <p class="mb-4 text-gray-500"></p>
+                            <form method="GET" action="{{ route('hplcMyPosts') }}" class="mx-2">
+                              <div>
+                                @csrf
+                                <input type="text" name="search" placeholder="Searching For Summury & File" value="{{ request('search') }}" class="px-2 py-2 border border-pink-500 rounded placeholder:italic  placeholder:text-xs w-1/2" />
+                                <button type="submit" class="rounded-md bg-sky-500 py-2 px-3 mt-2 text-gray-50 hover:bg-sky-700 active:scale-95 active:shadow-lg transition-transform duration-100">Search</button>
+                                <!-- 検索解除ボタン -->
+                                    @if(request('search'))
+                                    <a href="{{ route('hplcMyPosts') }}" class="rounded-md bg-gray-500 py-2 px-3 mt-2 text-gray-50 hover:bg-gray-700 active:scale-95 active:shadow-lg transition-transform duration-100">
+                                        Reset
+                                    </a>
+                                    @endif
+                              </div>
+                              <p class="italic text-xs text-gray-500">(Not AI Search)</p>
+                            </form>
+       
+                            <br>
                             @if($mines->count())
                                 <div class="overflow-x-auto">
                                 <table class="min-w-full table-auto"> <!-- ここでテーブルを追加 -->
@@ -50,7 +66,7 @@
                                         <td class="border px-4 py-2 text-xs">{{ $mine->updated_at->format('Y-m-d') }}</td>
                                         <td class="border px-4 py-2 text-xs">{{ basename($mine->file_path) }}</td>
                                         <td class="border px-4 py-2">
-                                        <a href="{{ route('hplcChooseData', ['id' => $mine->id]) }}" class="text-blue-500 hover:underline">🔍</a>
+                                        <a href="{{ route('hplcChooseData', ['id' => $mine->id, 'search' => request('search')]) }}" class="text-blue-500 hover:underline">🔍</a>
                                         </td>
                                     </tr>
                                     @endforeach

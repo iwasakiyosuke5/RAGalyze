@@ -14,10 +14,21 @@ class HplcResultController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $mines = HplcResult::where('user_id', auth()->id())->orderBy('updated_at','desc')->paginate(5);
+        // 検索できるようした
+        $query = HplcResult::where('user_id', auth()->id());
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('content', 'like', "%{$search}%")
+                ->orWhere('file_path', 'like', "%{$search}%");
+            });
+        }
+        $mines = $query->orderBy('updated_at','desc')->paginate(5)->withQueryString();
         return view('hplcs.myPosts', compact('mines'));
+        // // 下記は検索しない場合
+        // $mines = HplcResult::where('user_id', auth()->id())→orderBy('updated_at','desc')->paginate(5);
     }
 
     /**
@@ -39,9 +50,9 @@ class HplcResultController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
-        $mines = HplcResult::where('user_id', auth()->id())->orderBy('updated_at','desc')->paginate(5);
+        
         $post = HplcResult::where('id', $id)->firstOrFail(); 
         
         // ポストのユーザーIDとログインユーザーIDが一致しない場合
@@ -49,6 +60,19 @@ class HplcResultController extends Controller
             // 所有者でない場合は403エラーを返す
             abort(403, 'You do not have permission to view this data.');
         }
+
+        $query = HplcResult::where('user_id', auth()->id());
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('content', 'like', '%' . $search . '%')
+                  ->orWhere('file_path', 'like', '%' . $search . '%');
+            });
+        }
+    
+        // 検索結果のページネーションを保持
+        $mines = $query->orderBy('updated_at', 'desc')->paginate(5)->withQueryString();
         
         $textData = $post->content;
         $imageData = base64_encode(file_get_contents(public_path($post->file_path)));
