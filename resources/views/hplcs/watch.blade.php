@@ -136,12 +136,12 @@
                         <div>
                             <h1 class="ml-2 text-lg text-pink-500">AI-Summarized Text</h1>
                         </div>
-                        <div class="">
+                        <div class="ml-2 mr-2">
                             <form action="{{ route('hplc_upload') }}" method="POST" enctype="multipart/form-data" class="">
                                 @csrf
-                                <textarea class="ml-8 w-4/5 rounded-md border-2 border-pink-500" name="text_data" id="" cols="" rows="30">{{ $textData }}</textarea>
+                                <textarea class="w-full rounded-md border-2 border-pink-500" name="text_data" id="" cols="" rows="30">{{ $textData }}</textarea>
                                 <input type="hidden" name="file_path" value={{ $filePath }}>
-                                <div class="grid place-items-end mr-12">
+                                <div class="grid place-items-end">
                                     <button class="rounded-md bg-sky-500 p-2 w-1/3 text-gray-50 hover:bg-sky-700 active:scale-95 active:shadow-lg transition-transform duration-100" type="submit">1.Data Upload</button>
                                 </div>
                                 
@@ -151,7 +151,7 @@
                             <form action="{{ route('deleteAndRedirect') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="file_path" value="{{ $filePath }}">
-                                <div class="grid place-items-end mr-12">
+                                <div class="grid place-items-end">
                                     <button class="rounded-md bg-rose-500 p-2 w-1/3 hover:text-gray-300 active:scale-95 active:shadow-lg transition-transform duration-100" type="submit">2.Upload Other Data</button>
                                 </div>
                             </form>

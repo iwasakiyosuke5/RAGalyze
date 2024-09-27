@@ -107,7 +107,7 @@
                                     </div>
                                     
                                 </form>
-                                <br>
+                                
                                 
                                 <form action="{{ route('hplcDestroyData', ['hplc_result' => $post->id]) }}" method="POST" onsubmit="return confirm('Really Delete?');">
                                     @csrf
