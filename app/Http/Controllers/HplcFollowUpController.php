@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
+
+
 class HplcFollowUpController extends Controller
 {
     private function extractKeywords($query)
@@ -24,7 +26,8 @@ class HplcFollowUpController extends Controller
         $followupQuestion = $request->input('followupQuestion');
     
         // 最新の質問をベクトル化して検索に使用する
-        $query = $followupQuestion;
+        // $query = $followupQuestion;
+        $query = $request->input('followupQuestion');
         $vector = $this->vectorize($query);
     
         $fragments = HplcResult::with('user')->get();
@@ -58,71 +61,37 @@ class HplcFollowUpController extends Controller
     
         // もしキーワードに一致するフラグメントがなければ、上位5つの結果を使用
         if (empty($filteredResults)) {
-            $filteredResults = array_slice($results, 0, 5);
+            $filteredResults = array_slice($results, 0, 7);
         }
     
     
         $context = implode("\n", array_map(function($result) {
             return $result['fragment']->content . '\nFile_Path: ' . $result['fragment'];
-        }, array_slice($filteredResults, 0, 5)));
+        }, array_slice($filteredResults, 0, 7)));
     
-        $apiKey = env('OPENAI_API_KEY');
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $apiKey,
-        ])->post('https://api.openai.com/v1/chat/completions', [
-            'model' => 'gpt-4o-mini',
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => 'You are an expert assistant specializing in retrieving and analyzing chemical data. Your goal is to provide accurate and relevant information based on the provided context, including past interactions and user queries. When answering a follow-up question:
+        $aiResponse = $this->askAI($followupQuestion, $context, $previousQuestion, $previousResponse, $filteredResults);
 
-                    1. Consider the previous response and the user follow-up question carefully to ensure continuity and relevance.
-                    2. Once you find the analysis information, present one to three records in your recommended order, following the format below:
-                    <table>
-                        <tr><th>Date</th>   <th class="pl-2">Code</th>   <th class="pl-2">Column Name</th>      <th class="pl-2">Main Peak Purity</th> <th class="pl-2">File_Path</th></tr>
-                        <tr><td>{date1}</td><td class="pl-2">{code1}</td>  <td class="pl-2">{column_name1}</td>   <td class="pl-2">{purity1}%</td>       <td class="pl-2 text-xs">(File_Path_url1)</td></tr>
-                        <tr><td>{date2}</td><td class="pl-2">{code2}</td>  <td class="pl-2">{column_name2}</td>   <td class="pl-2">{purity2}%</td>       <td class="pl-2 text-xs">(File_Path_url2)</td></tr>
-                        <tr><td>{date3}</td><td class="pl-2">{code3}</td>  <td class="pl-2">{column_name3}</td>   <td class="pl-2">{purity3}%</td>       <td class="pl-2 text-xs">(File_Path_url3)</td></tr>
-                    </table>
-                    3. Finally, provide a brief summary of the presented data in a clear and concise manner.'
-                ],
-                [
-                    'role' => 'assistant',
-                    'content' => "previousResponse: $previousResponse"
-                ],
-                [
-                    'role' => 'user',
-                    'content' => "previousQuestion: $previousQuestion \nFollow-up Question: $followupQuestion\nContext: $context\nAnswer:"
-                ],
-                
-            ],
-            'max_tokens' => 600,
-            'temperature' => 0.7,
-        ]);
+
+        // ファイルパスをリンクに変換する処理（HplcQuestionControllerと同様）
+        $aiResponseWithLinks = preg_replace_callback(
+            '/(uploads\/\S+\.\w+)/',
+            function ($matches) {
+                $url = asset($matches[1]); // asset関数でURLを生成
+                $fileName = basename($matches[1]); // ファイル名部分を取得
+                return '<a href="' . $url . '" class="text-sky-500 hover:text-sky-700" target="_blank">' . $fileName . '</a>';
+            },
+            strip_tags($aiResponse, '<table><tr><th><td><br>') // テーブルタグを維持
+        );
     
-        if ($response->successful()) {
-            $aiFollowupResponse = $response->json()['choices'][0]['message']['content'];
+        Log::info('AI Response with links: ' . $aiResponseWithLinks);
         
-            // URLやファイルパスをリンクに変換する
-            $aiResponseWithLinks = preg_replace_callback(
-                '~(uploads/\S+\.\w+)~',
-                function ($matches) {
-                    // リンクが既に存在していない場合のみ、リンクを作成する
-                    return '<a href="' . asset($matches[1]) . '" target="_blank"  class="text-sky-500 hover:text-sky-700" target="_blank">' . $matches[1] . '</a>';
-                },
-                strip_tags($aiFollowupResponse, '<table><tr><th><td><br>') // テーブルタグは維持して、それ以外のタグは削除
-            );
-            
-            Log::info('AI Response with links: ' . $aiResponseWithLinks);
-        } else {
-            Log::error('OpenAI follow-up request failed', ['status' => $response->status(), 'body' => $response->body()]);
-            $aiResponseWithLinks = 'Failed to get a response from the OpenAI service.';
-        }
+
         
+
         return view('hplcs/response', [
             'question' => "past question: " . nl2br(e($previousQuestion)) . "<br><br>" . "new question: ". nl2br(e($followupQuestion)),
             'aiResponse' => $aiResponseWithLinks, 
-            'results' => $results // RAGの結果を再度表示
+            'results' => $filteredResults
         ]);
     }
 
@@ -142,7 +111,7 @@ class HplcFollowUpController extends Controller
             return $response->json()['data'][0]['embedding'];; // ベクトルを返す
         } else {
             Log::error('OpenAI request failed', ['status' => $response->status(), 'body' => $response->body()]);
-            return array_fill(0, 512, 0); 
+            return redirect()->route('hplcs.errorPage')->with('error', 'Time Error');
         }
     }
 
@@ -164,8 +133,65 @@ class HplcFollowUpController extends Controller
         return $dotProduct / ($magnitude1 * $magnitude2);   // コサイン類似度を計算して返す
     }
 
+    private function askAI($followupQuestion, $context, $previousQuestion, $previousResponse, $results)
+    {  
+        $apiKey = env('OPENAI_API_KEY');
 
+    try {
+        $response = Http::retry(3, 1000) // 最大3回まで再試行、間隔は1秒
+                        ->timeout(60) // タイムアウトを60秒に設定
+                        ->withHeaders([
+                            'Authorization' => 'Bearer ' . $apiKey,
+                        ])
+                        ->post('https://api.openai.com/v1/chat/completions', [
+                        'model' => 'gpt-4o-mini',
+                        'messages' => [
+                        [
+                            'role' => 'system',
+                            'content' => 'You are an expert assistant specializing in retrieving and analyzing chemical data. Your goal is to provide accurate and relevant information based on the provided context, including past interactions and user queries. When answering a follow-up question:
 
+                            1. Consider the previous response and the user follow-up question carefully to ensure continuity and relevance.
+                            2. Once you find the analysis information, present one to three records in your recommended order, following the format below:
+                            <table>
+                                <tr><th>Date</th>   <th class="pl-2">Code</th>   <th class="pl-2">Column Name</th>      <th class="pl-2">Main Peak Purity</th> <th class="pl-2">File_Path</th></tr>
+                                <tr><td>{date1}</td><td class="pl-2">{code1}</td>  <td class="pl-2">{column_name1}</td>   <td class="pl-2 text-center">{purity1}%</td>       <td class="pl-2 text-xs">(File_Path_url1)</td></tr>
+                                <tr><td>{date2}</td><td class="pl-2">{code2}</td>  <td class="pl-2">{column_name2}</td>   <td class="pl-2 text-center">{purity2}%</td>       <td class="pl-2 text-xs">(File_Path_url2)</td></tr>
+                                <tr><td>{date3}</td><td class="pl-2">{code3}</td>  <td class="pl-2">{column_name3}</td>   <td class="pl-2 text-center">{purity3}%</td>       <td class="pl-2 text-xs">(File_Path_url3)</td></tr>
+                            </table>
+                            3. Finally, provide a brief summary of the presented data in a clear and concise manner.'
+                        ],
+                        [
+                            'role' => 'assistant',
+                            'content' => "previousResponse: $previousResponse"
+                        ],
+                        [
+                            'role' => 'user',
+                            'content' => "previousQuestion: $previousQuestion \nFollow-up Question: $followupQuestion\nContext: $context\nAnswer:"
+                        ],
+                        
+                        ],
+                        'max_tokens' => 700,
+                        'temperature' => 0.7,
+                        ]);
+    
+                    if ($response->successful()) {
+                        return $response->json()['choices'][0]['message']['content'];
+                    }  else {
+                        return redirect()->route('hplcs.errorPage')->with('error', 'API Error');
+                    }
 
+        } catch (\Illuminate\Http\Client\RequestException $e) {
 
+            // タイムアウトの場合には「Time Error」を返す
+            if ($e->getCode() === 28) {
+                return redirect()->route('hplcs.errorPage')->with('error', 'Time Error');
+            }
+
+            // その他のリクエスト例外
+            return redirect()->route('hplcs.errorPage')->with('error', 'Request Error');
+
+        } catch (\Exception $e) {
+            return redirect()->route('hplcs.errorPage')->with('error', 'An unexpected error occurred');
+        }
+    }
 }

@@ -69,6 +69,10 @@ require __DIR__.'/auth.php';
         return view('hplcs.record');
     });
 
+    Route::get('/hplcs/error', function () {
+        return view('hplcs.error');
+    })->name('hplcs.errorPage');
+
     //さらにpngデータの投稿
     Route::post('/convert/png', [HplcResultController::class, 'convertPng'])->name('convert.png'); 
 
@@ -86,6 +90,8 @@ require __DIR__.'/auth.php';
 
     // hplcs/myPosts.blade.phpのからの削除
     Route::delete('/hplcs/myPosts/{hplc_result}', [HplcResultController::class, 'destroy'])->name('hplcDestroyData');
+
+    
 
     Route::get('/hplcs/record', [HplcRecordController::class, 'index'])->name('hplcRecord');
 

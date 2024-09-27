@@ -124,13 +124,13 @@ class HplcQuestionController extends Controller
     
         // もしキーワードに一致するフラグメントがなければ、上位5つの結果を使用
         if (empty($filteredResults)) {
-            $filteredResults = array_slice($results, 0, 5);
+            $filteredResults = array_slice($results, 0, 8);
         }
     
         // フィルタリングされた結果からコンテキストを作成（上位3つを使用）
         $context = implode("\n", array_map(function($result) {
             return $result['fragment']->content . '\nFile_Path: ' . $result['fragment'];
-        }, array_slice($filteredResults, 0, 5)));
+        }, array_slice($filteredResults, 0, 8)));
     
         $aiResponse = $this->askAI($query, $context);
         
@@ -174,7 +174,7 @@ class HplcQuestionController extends Controller
             return $response->json()['data'][0]['embedding'];; // ベクトルを返す
         } else {
             Log::error('OpenAI request failed', ['status' => $response->status(), 'body' => $response->body()]);
-            return array_fill(0, 512, 0); 
+            return redirect()->route('hplcs.errorPage')->with('error', 'Time Error');
         }
     }
 
@@ -200,9 +200,14 @@ class HplcQuestionController extends Controller
     private function askAI($query, $context)
     {
         $apiKey = env('OPENAI_API_KEY'); // OpenAI APIキーを取得
-        $response = Http::withHeaders([ // APIキーなどをOpenAI APIにリクエスト
-            'Authorization' => 'Bearer ' . $apiKey, 
-        ])->post('https://api.openai.com/v1/chat/completions', [ 
+        
+    try {    
+        $response = Http::retry(3, 1000) // 最大3回まで再試行、間隔は1秒
+        ->timeout(60) // タイムアウトを60秒に設定
+        ->withHeaders([
+            'Authorization' => 'Bearer ' . $apiKey,
+        ])
+        ->post('https://api.openai.com/v1/chat/completions', [ 
             'model' => 'gpt-4o-mini',  // モデルの指定
             'messages' => [
                 [
@@ -245,12 +250,12 @@ class HplcQuestionController extends Controller
                     **Steps for Condition B**:
                         1. Focus on the "user question" and the "content of the keywords" to find analysis information for similar compounds. Pay special attention to "molecular weight proximity," "functional group similarity," and "types of compounds involved."
                         2. Once you find the analysis information, present one to three records in your recommended order, following the format below.:
-                        <table>
-                            <tr><th>Date</th>   <th class="pl-2">Code</th>   <th class="pl-2">Column Name</th>      <th class="pl-2">Main Peak Purity</th> <th class="pl-2">File_Path</th></tr>
-                            <tr><td>{date1}</td><td class="pl-2>{code1}</td>  <td class="pl-2">{column_name1}</td>   <td class="pl-2">{purity1}%</td>       <td class="pl-2 text-xs">(File_Path_url1)</td></tr>
-                            <tr><td>{date2}</td><td class="pl-2>{code2}</td>  <td class="pl-2">{column_name2}</td>   <td class="pl-2">{purity2}%</td>       <td class="pl-2 text-xs">(File_Path_url2)</td></tr>
-                            <tr><td>{date3}</td><td class="pl-2>{code3}</td>  <td class="pl-2">{column_name3}</td>   <td class="pl-2">{purity3}%</td>       <td class="pl-2 text-xs">(File_Path_url3)</td></tr>
-                        </table>
+                            <table>
+                                <tr><th>Date</th>   <th class="pl-2">Code</th>    <th class="pl-2">Column Name</th>      <th class="pl-2">Main Peak Purity</th> <th class="pl-2">File_Path</th></tr>
+                                <tr><td>{date1}</td><td class="pl-2>{code1}</td>  <td class="pl-2">{column_name1}</td>  <td class="pl-2 text-center">{purity1}%</td>       <td class="pl-2 text-xs">(File_Path_url1)</td></tr>
+                                <tr><td>{date2}</td><td class="pl-2>{code2}</td>  <td class="pl-2">{column_name2}</td>  <td class="pl-2 text-center">{purity2}%</td>       <td class="pl-2 text-xs">(File_Path_url2)</td></tr>
+                                <tr><td>{date3}</td><td class="pl-2>{code3}</td>  <td class="pl-2">{column_name3}</td>  <td class="pl-2 text-center">{purity3}%</td>       <td class="pl-2 text-xs">(File_Path_url3)</td></tr>
+                            </table>
                         3. Finally, provide a brief summary.
 
                     **Steps for Condition C**:
@@ -269,16 +274,32 @@ class HplcQuestionController extends Controller
                     'content' => "Question: $query\nContext: $context\nAnswer:" // クエリとコンテキストを含むメッセージ
                 ],
             ],
-            'max_tokens' => 600,
+            'max_tokens' => 700,
             'temperature' => 0.7,
         ]);
 
         if ($response->successful()) {
             return $response->json()['choices'][0]['message']['content'];
         } else {
-            Log::error('OpenAI request failed', ['status' => $response->status(), 'body' => $response->body()]);
-            return 'Failed to get a response from the OpenAI service.';
+            
+            return redirect()->route('hplcs.errorPage')->with('error', 'API Error: ' . $response->status());
         }
+
+    } catch (\Illuminate\Http\Client\RequestException $e) {
+
+        // タイムアウトの場合には「Time Error」を返す
+        if ($e->getCode() === 28) {
+            return redirect()->route('hplcs.errorPage')->with('error', 'Time Error');
+        }
+
+        // その他のリクエスト例外
+        return redirect()->route('hplcs.errorPage')->with('error', 'Request Error: ' . $e->getMessage());
+
+    } catch (\Exception $e) {
+
+        return redirect()->route('hplcs.errorPage')->with('error', 'An unexpected error occurred: ' . $e->getMessage());
+    }
+
     }
 
 

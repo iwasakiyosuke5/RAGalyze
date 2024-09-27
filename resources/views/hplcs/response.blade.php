@@ -16,7 +16,9 @@
                                 <h5  class="text-xl font-semibold">AI Response :</h5>
                                 <p class="italic text-xs text-gray-600">*Please ask again if there are any issues, such as the File_path not being displayed.</p>
                                 <div class="text-gray-600 text-lg w-full p-2 bg-gray-50 rounded-lg border border-pink-500">{!! $aiResponse !!}</div>
-                                
+                                <div class="grid place-items-end">
+                                    <a href="{{ route('hplcQuestion') }}" class="rounded bg-sky-500 text-gray-50  hover:bg-sky-700 p-2 mt-1">Start Over</a>                                    
+                                </div>
                             </div>
                         </div>
                         <br>
@@ -26,7 +28,7 @@
                                 <form method="POST" action="{{ route('askAgain') }}" onsubmit="showSpinner()">
                                     @csrf
                                     <div class="form-group">
-                                        <textarea class="pl-2 w-full min-h-40 rounded-lg border border-pink-500" type="text" id="followupQuestion" name="followupQuestion" required></textarea>
+                                        <textarea class="pl-2 w-full min-h-40 rounded-lg border border-pink-500 text-lg" type="text" id="followupQuestion" name="followupQuestion" required></textarea>
                                     </div>
                                     <input type="hidden" name="previousQuestion" value="{{ $question }}">
                                     <input type="hidden" name="previousResponse" value="{{ $aiResponse }}">
@@ -71,5 +73,7 @@
         </div>
         
     </section>
+
+    
 </x-appHplc-layout>
 
