@@ -44,7 +44,7 @@
                                     </a>
                                     @endif
                               </div>
-                              <p class="italic text-xs text-gray-500">(Not AI Search)</p>
+                              <p class="italic text-xs text-gray-500">(Not AI Search, Separated search by space is possible.)</p>
                             </form>
        
                             <br>
@@ -82,10 +82,7 @@
                             @else
                                 <p class="text-lg font-bold text-rose-600">No Posts found.</p>
                             @endif
-                            
 
-
-        
                             </div>
                         </div>
                     </div>

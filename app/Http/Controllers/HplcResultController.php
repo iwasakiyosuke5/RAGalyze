@@ -18,12 +18,25 @@ class HplcResultController extends Controller
     {
         // 検索できるようした
         $query = HplcResult::where('user_id', auth()->id());
+
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->where(function($q) use ($search) {
-                $q->where('content', 'like', "%{$search}%")
-                ->orWhere('file_path', 'like', "%{$search}%");
+
+            $keywords = preg_split('/[ \x{3000}]+/u', $search, -1, PREG_SPLIT_NO_EMPTY);
+
+            $query->where(function ($q) use ($keywords) {
+                foreach ($keywords as $keyword) {
+                    $q->where(function ($subQuery) use ($keyword) {
+                        $subQuery->where('content', 'like', "%{$keyword}%")
+                            ->orWhere('file_path', 'like', "%{$keyword}%");
+                    });
+                }
             });
+            
+            // $query->where(function($q) use ($search) {
+            //     $q->where('content', 'like', "%{$search}%")
+            //     ->orWhere('file_path', 'like', "%{$search}%");
+            // });
         }
         $mines = $query->orderBy('updated_at','desc')->paginate(5)->withQueryString();
         return view('hplcs.myPosts', compact('mines'));
