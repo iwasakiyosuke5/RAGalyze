@@ -98,7 +98,7 @@ class HplcQuestionController extends Controller
         foreach ($fragments as $fragment) { // すべてのフラグメントに対して類似度を計算
             $storedVector = json_decode($fragment->vector, true); // データベースに保存されたベクトルを取得
             if (is_null($storedVector)) {   // ベクトルがnullの場合はスキップ
-                Log::error('Stored vector is null', ['fragment_id' => $fragment->id]);
+                // Log::error('Stored vector is null', ['fragment_id' => $fragment->id]);
                 continue;
             }
             $similarity = $this->cosineSimilarity($vector, $storedVector);  // 類似度を計算
@@ -173,7 +173,7 @@ class HplcQuestionController extends Controller
         if ($response->successful()) {
             return $response->json()['data'][0]['embedding'];; // ベクトルを返す
         } else {
-            Log::error('OpenAI request failed', ['status' => $response->status(), 'body' => $response->body()]);
+            // Log::error('OpenAI request failed', ['status' => $response->status(), 'body' => $response->body()]);
             return redirect()->route('hplcs.errorPage')->with('error', 'Time Error');
         }
     }
@@ -181,7 +181,7 @@ class HplcQuestionController extends Controller
     private function cosineSimilarity($vec1, $vec2) // コサイン類似度を計算
     {
         if (!is_array($vec1) || !is_array($vec2)) { // ベクトルが配列でない場合はエラー
-            Log::error('Vectors must be arrays', ['vec1' => $vec1, 'vec2' => $vec2]);   // エラーログを出力
+            // Log::error('Vectors must be arrays', ['vec1' => $vec1, 'vec2' => $vec2]);   // エラーログを出力
             return 0;   // 類似度を0として返す
         }
 

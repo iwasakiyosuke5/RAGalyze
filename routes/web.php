@@ -94,3 +94,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php'; // 認証関連のルートを読み込む 
+
