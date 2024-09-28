@@ -3,7 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HplcResultController;
 use App\Http\Controllers\HplcQuestionController;
-Use App\Http\Controllers\HplcFollowUpController;
+use App\Http\Controllers\HplcFollowUpController;
 use App\Http\Controllers\HplcRecordController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,7 +26,9 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// 認証が必要なルート
 Route::middleware('auth')->group(function () {
+    // プロフィール関連のルート
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -35,20 +37,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('hplc_results', HplcResultController::class);
     Route::post('hplc_upload', [HplcResultController::class, 'upload'])->name('hplc_upload');
 
-
     // hplc_questionsのルーティング
     Route::post('/search', [HplcQuestionController::class, 'store'])->name('search');
     Route::get('/hplc_response/{id}', [HplcQuestionController::class, 'response'])->name('hplc_response');
     Route::post('/hplc_responseAgain', [HplcFollowUpController::class, 'askAgain'])->name('askAgain');
-    
 
-});
-
-require __DIR__.'/auth.php';
-
-
-
-// HPLC関係
+    // HPLC関連のルートに認証を適用
     Route::get('/hplcs/top', function () {
         return view('hplcs.top');
     })->name('hplcTop');
@@ -59,7 +53,7 @@ require __DIR__.'/auth.php';
 
     Route::get('/hplcs/question', function () {
         return view('hplcs.question');
-    })->name('hplcQuestion');  
+    })->name('hplcQuestion');
 
     Route::get('/hplcs/response', function () {
         return view('hplcs.response');
@@ -73,27 +67,30 @@ require __DIR__.'/auth.php';
         return view('hplcs.error');
     })->name('hplcs.errorPage');
 
-    //さらにpngデータの投稿
-    Route::post('/convert/png', [HplcResultController::class, 'convertPng'])->name('convert.png'); 
+    // PNGデータの投稿
+    Route::post('/convert/png', [HplcResultController::class, 'convertPng'])->name('convert.png');
 
     // hplcs/watchで結果を見た後、requestに戻る場合（画像の削除も行う）
     Route::post('delete-and-redirect', [HplcResultController::class, 'deleteAndRedirect'])->name('deleteAndRedirect');
 
-    // hplcs/myPosts.blade.phpの表示
+    // 自分の投稿を表示
     Route::get('/hplcs/myPosts', [HplcResultController::class, 'index'])->name('hplcMyPosts');
 
-    // hplcs/myPosts.blade.phpのからの詳細表示
+    // 投稿詳細表示
     Route::get('/hplcs/myPosts/{id}', [HplcResultController::class, 'show'])->name('hplcChooseData');
 
-    // hplcs/myPosts.blade.phpのからの更新
+    // 投稿の更新
     Route::put('/hplcs/myPosts/{hplc_result}', [HplcResultController::class, 'update'])->name('hplcUpdateData');
 
-    // hplcs/myPosts.blade.phpのからの削除
+    // 投稿の削除
     Route::delete('/hplcs/myPosts/{hplc_result}', [HplcResultController::class, 'destroy'])->name('hplcDestroyData');
 
-    
-
+    // HPLCの記録を表示
     Route::get('/hplcs/record', [HplcRecordController::class, 'index'])->name('hplcRecord');
 
+    // API関係のルーティング
     Route::get('api/department-count', [HplcRecordController::class, 'departmentCount'])->name('api.departmentCount');
     Route::get('api/personal-stats', [HplcRecordController::class, 'personalStats'])->name('api.personalStats');
+});
+
+require __DIR__.'/auth.php'; // 認証関連のルートを読み込む 
