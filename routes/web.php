@@ -103,7 +103,7 @@ Route::middleware('auth')->group(function () {
         Route::post('gc_upload', [GcResultController::class, 'upload'])->name('gc_upload');
 
         // // gc_questionsのルーティング
-        Route::post('/search', [GcQuestionController::class, 'store'])->name('searchGc');
+        Route::post('/searchGc', [GcQuestionController::class, 'store'])->name('searchGc');
         Route::get('/gc_response/{id}', [GcQuestionController::class, 'response'])->name('gc_response');
         Route::post('/gc_responseAgain', [GcFollowUpController::class, 'askAgain'])->name('askAgainGc');
 
@@ -133,10 +133,10 @@ Route::middleware('auth')->group(function () {
         })->name('gcs.errorPage');
 
         // PNGデータの投稿
-        Route::post('/convert/png', [GcResultController::class, 'convertPng'])->name('convertGc.png');
+        Route::post('/convertGc/png', [GcResultController::class, 'convertPng'])->name('convertGc.png');
 
         // // gcs/watchで結果を見た後、requestに戻る場合（画像の削除も行う）
-        Route::post('delete-and-redirect', [GcResultController::class, 'deleteAndRedirect'])->name('deleteAndRedirectGc');
+        Route::post('delete-and-redirectGc', [GcResultController::class, 'deleteAndRedirect'])->name('deleteAndRedirectGc');
 
         // // 自分の投稿を表示
         Route::get('/gcs/myPosts', [GcResultController::class, 'index'])->name('gcMyPosts');
@@ -154,8 +154,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/gcs/record', [GcRecordController::class, 'index'])->name('gcRecord');
 
         // // API関係のルーティング
-        Route::get('api/department-count', [GcRecordController::class, 'departmentCount'])->name('api.departmentCountGc');
-        Route::get('api/personal-stats', [GcRecordController::class, 'personalStats'])->name('api.personalStatsGc');
+        Route::get('api/department-countGc', [GcRecordController::class, 'departmentCount'])->name('api.departmentCountGc');
+        Route::get('api/personal-statsGc', [GcRecordController::class, 'personalStats'])->name('api.personalStatsGc');
 
 });
 
