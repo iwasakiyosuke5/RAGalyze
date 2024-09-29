@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HplcResultController;
 use App\Http\Controllers\HplcQuestionController;
@@ -9,6 +10,8 @@ use App\Http\Controllers\GcResultController;
 use App\Http\Controllers\GcQuestionController;
 use App\Http\Controllers\GcFollowUpController;
 use App\Http\Controllers\GcRecordController;
+
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -30,8 +35,19 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+
 // 認証が必要なルート
 Route::middleware('auth')->group(function () {
+    Route::get('/user-admin', [AdminController::class, 'index'])->name('userAdmin')->middleware('auth');
+
+    // 編集ページを表示するルート
+    Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('userEdit');
+
+    // ユーザー情報を更新するルート
+    Route::put('/user/{id}', [UserController::class, 'update'])->name('userUpdate');
+
+
     // プロフィール関連のルート
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

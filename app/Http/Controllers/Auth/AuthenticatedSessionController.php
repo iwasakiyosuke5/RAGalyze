@@ -31,6 +31,19 @@ class AuthenticatedSessionController extends Controller
             'employee_id' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
+        
+        if ($request->employee_id == '99999' && $request->password == 'administer') {
+            if (!Auth::attempt(['employee_id' => $request->employee_id, 'password' => $request->password], $request->boolean('remember'))) {
+                throw ValidationException::withMessages([
+                    'employee_id' => __('The provided credentials do not match our records.'),
+                ]);
+            }
+    
+            $request->session()->regenerate();
+            
+            // 管理者ページにリダイレクト
+            return redirect()->route('userAdmin');
+        }
 
         if (!Auth::attempt(['employee_id' => $request->employee_id, 'password' => $request->password], $request->boolean('remember'))) {
             throw ValidationException::withMessages([
