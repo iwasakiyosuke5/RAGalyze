@@ -16,26 +16,35 @@
                         {{ __('Select Equip.') }}
                     </x-nav-link>
                 </div>
-            </div>
-
-            <div class="flex">
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('hplcTop')" :active="request()->routeIs('hplcTop')" class="text-pink-800 hover:text-pink-500 hover:border-b-2 hover:border-pink-500">
-                        {{ __('HPLC') }}
-                    </x-nav-link>
-                </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('gcTop')" :active="request()->routeIs('gcTop')" class="text-green-800 hover:text-green-500 hover:border-b-2 hover:border-green-500">
                         {{ __('GC') }}
                     </x-nav-link>
                 </div>
+            </div>
+
+            <div class="flex">
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link class="text-purple-800 hover:text-purple-500 cursor-not-allowed">
-                        {{ __('NMR') }}
+                    <x-nav-link :href="route('gcRequest')" :active="request()->routeIs('gcRequest')" class="text-black hover:text-green-500 hover:border-b-2 hover:border-green-500">
+                        {{ __('Register') }}
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('gcQuestion')" :active="request()->routeIs('gcQuestion')" class="text-black hover:text-green-500 hover:border-b-2 hover:border-green-500">
+                        {{ __('Ask') }}
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('gcMyPosts')" :active="request()->routeIs('gcMyPosts')" class="text-black hover:text-green-500 hover:border-b-2 hover:border-green-500">
+                        {{ __('My Posts') }}
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('gcRecord')" :active="request()->routeIs('gcRecord')" class="text-black hover:text-green-500 hover:border-b-2 hover:border-green-500">
+                        {{ __('Our Records') }}
                     </x-nav-link>
                 </div>
             </div>
-
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
@@ -85,8 +94,8 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-indigo-800 hover:text-indigo-500">
-                {{ __('Select Equip.') }}
+            <x-responsive-nav-link :href="route('gcTop')" :active="request()->routeIs('gcTop')" class="text-green-800 hover:text-green-500">
+                {{ __('GC') }}
             </x-responsive-nav-link>
         </div>
 

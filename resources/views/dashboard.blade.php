@@ -1,9 +1,5 @@
 <x-app-layout>
-    {{-- <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot> --}}
+
 
     <section class="text-gray-600 body-font">
         <div class="container px-5 py-24 mx-auto">
@@ -38,8 +34,9 @@
               </div>
               <div class="flex-grow">
                 <h2 class="text-gray-900 text-lg title-font font-medium mb-3">GC</h2>
-                <p class="leading-relaxed text-base">Sorry! We are building the service.</p>
-                <a class="text-lg mt-3 text-green-800 hover:text-green-500 inline-flex cursor-not-allowed items-center">Go GC
+                <p class="leading-relaxed text-base">Search for registered analysis data<br>Registration of analysis data
+                  <br>Help with suitable analysis conditions</p>
+                <a  href="{{ route('gcTop') }}" class="text-lg mt-3 text-green-800 hover:text-green-500 inline-flex items-center">Go GC
                   <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-2" viewBox="0 0 24 24">
                     <path d="M5 12h14M12 5l7 7-7 7"></path>
                   </svg>

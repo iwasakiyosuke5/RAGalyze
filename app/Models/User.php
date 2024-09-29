@@ -54,4 +54,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(HplcQuestion::class);
     }
+
+    public function gcResults()
+    {
+        return $this->hasMany(GcResult::class);
+    }
+    public function gcQuestions()
+    {
+        return $this->hasMany(GcQuestion::class);
+    }
 }
