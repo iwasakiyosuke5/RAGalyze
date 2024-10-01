@@ -41,13 +41,14 @@
 <script>
         function showSpinner() {
             document.getElementById("spinner").style.display = "block";
+
             setTimeout(() => {
-            const elements = document.querySelectorAll('input, button');
+            const elements = document.querySelectorAll('input[type="submit"]', 'button[type="submit"]');
             elements.forEach(element => {
                 element.disabled = true;
-                elemrnt.style.opacity = '0.5';
+                
             });
-            }, 500);
+            }, 0);
 
             const navLinks = document.querySelectorAll('nav a, nav button');
             navLinks.forEach(link => {
