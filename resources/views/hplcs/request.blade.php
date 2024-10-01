@@ -86,7 +86,7 @@
             }
         }
 
-function validateFileName() {
+        function validateFileName() {
             const fileInput = document.getElementById('file');
             const fileName = fileInput.files[0].name;
             const validPattern = /^[a-zA-Z0-9._-]+$/;

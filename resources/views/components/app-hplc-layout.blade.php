@@ -39,7 +39,24 @@
 </style>
 
 <script>
-        function showSpinner() {
-    document.getElementById("spinner").style.display = "block";
-    }
+    function showSpinner() {
+        document.getElementById("spinner").style.display = "block";
+    
+        setTimeout(() => {
+        const elements = document.querySelectorAll('input, button');
+        elements.forEach(element => {
+            element.disabled = true;
+            elemrnt.style.opacity = '0.5';
+        });
+        }, 500);
+
+        const navLinks = document.querySelectorAll('nav a, nav button');
+        navLinks.forEach(link => {
+            link.style.pointerEvents = 'none'; // クリックを無効化
+            link.style.opacity = '0.5';        // 視覚的にも無効化された状態を示す
+        });
+    }   
+    
+
+
 </script>
