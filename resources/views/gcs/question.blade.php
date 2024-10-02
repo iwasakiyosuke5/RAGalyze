@@ -37,9 +37,9 @@
             <div class="flex-grow sm:text-left text-center mt-6 sm:mt-0">
               <h2 class="text-gray-900 text-lg title-font font-medium mb-2">Using SMILES Code</h2>
               <p class="leading-relaxed text-base">If you know the sample structure, it's best to search using SMILES.</p>
-              <p class="leading-relaxed text-xs text-base"><span class="italic">JPN.</span>「MW:117.15でアミノ基を持つSMILScode:CCC(NC)C(=O)Oの分析をします。似たような化合物の分析条件を教えて下さい。」</p>
-              <p class="leading-relaxed text-xs text-base"><span class="italic">ENG.</span> "I am analyzing a compound with a molecular weight of 117.15 and an amino group with the SMILES code: CCC(NC)C(=O)O. Please provide the analysis conditions for similar compounds."</p>
-              <p class="leading-relaxed text-xs text-base"><span class="italic">CHN.</span> "我正在分析一个分子量为117.15且含有氨基的化合物，SMILES代码为：CCC(NC)C(=O)O。请提供类似化合物的分析条件。"</p>
+              <p class="leading-relaxed text-xs text-base"><span class="italic">JPN.</span>「C5H6OS4=210.34でテトラチアフルバレン（TTF）構造を持つSMILScode:CSC1=C(SC(=O)S1)SCの分析をします。似たような化合物の分析条件を教えて下さい。」</p>
+              <p class="leading-relaxed text-xs text-base"><span class="italic">ENG.</span> "I am analyzing a compound with the formula C5H6OS4 = 210.34, which has a tetrathiafulvalene (TTF) structure and the SMILES code: CSC1=C(SC(=O)S1)SC. Please provide the analysis conditions for similar compounds."</p>
+              <p class="leading-relaxed text-xs text-base"><span class="italic">CHN.</span> "我正在分析一个化学式为C5H6OS4 = 210.34的化合物，该化合物具有四硫富瓦烯（TTF）结构，SMILES代码为：CSC1=C(SC(=O)S1)SC。请提供类似化合物的分析条件。"</p>
               
             </div>
             <div class="sm:w-32 sm:order-none order-first sm:h-32 h-20 w-20 sm:ml-10 inline-flex items-center justify-center rounded-full bg-green-100 text-green-500 flex-shrink-0">

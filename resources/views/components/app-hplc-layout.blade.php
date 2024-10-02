@@ -47,6 +47,7 @@
             elements.forEach(element => {
                 element.disabled = true;
                 // element.style.display = 'none'; //消す場合
+                element.style.opacity = '0.3';
             });
             }, 0);
 

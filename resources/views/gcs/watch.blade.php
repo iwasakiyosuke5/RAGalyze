@@ -103,27 +103,27 @@
                         <div class="mx-2">
         
                             <div class="rounded-md border-2 border-sky-500">
-                                <h1>Example 1: A2470</h1>
-                                <img class="w-2/5" src="{{ asset('img/A2470.png') }}" alt="">
-                                <p>Keywords: (S)-3-Amino-2-(tert-butoxycarbonylamino)propionic Acid</p>
-                                <p>C8H16N2O4: 204.23. Amino acid building block, functional groups are -NH2 and COOH.</p>  
+                                <h1>Example 1: M1112</h1>
+                                <img class="w-2/5" src="{{ asset('img/M1112.png') }}" alt="">
+                                <p>Keywords: 4,5-Methylenedithio-1,3-dithiole-2-thione</p>
+                                <p>C4H2S5:210.36. Tetrathiafulvalene(TTF) derivative.</p>  
                                 <div class="bg-gray-300">
-                                    <p class="text-sm italic">もし日本語で記載したら、C8H16N2O4:204.23。アミノ酸ビルディングブロック、官能基は-NH2とCOOH。</p>    
+                                    <p class="text-sm italic">もし日本語で記載したら、C4H2S5:210.36。テトラチアフルバレン（TTF）誘導体。</p>    
                                 </div>
-                                <p>SMILEScode: CC(C)(C)OC(=O)NC(CN)C(=O)O</p> 
+                                <p>SMILEScode: C1SC2=C(S1)SC(=S)S2</p> 
                                    
                             </div>
                             <br>
                             <div class="rounded-md border-2 border-sky-500">
-                                <h1>Example 2: Synthetic Intermediate A</h1>
-                                <img class="w-2/5" src="{{ asset('img/B5588.png') }}" alt="">
-                                <p>Keywords: C17H26BNO4 = 319.21. Aromatic boronic acid ester, with Boc protection.</p>
-                                <p>Synthetic intermediate 3 of custom compound Z5xy4</p>
+                                <h1>Example 2: Synthetic Intermediate B</h1>
+                                <img class="w-2/5" src="{{ asset('img/A1172.png') }}" alt="">
+                                <p>Keywords: C9H18N2O2 = 186.26. 3-Aminopyrrolidine derivative with Boc protection. Chiral compound.</p>
+                                <p>Starting material for custom product Z5xyz</p>
                                 <div class="bg-gray-300">
-                                    <p class="text-sm italic">もし日本語で記載したら、C17H26BNO4=319.21。芳香族ボロン酸エステル, Boc保護有り.</p>
-                                    <p class="text-sm italic">特注品Z5xy4の合成中間体3</p>    
+                                    <p class="text-sm italic">もし日本語で記載したら、C9H18N2O2 = 186.26。3-アミノピロリジン誘導体, Boc保護有り。</p>
+                                    <p class="text-sm italic">キラル化合物。特注品Z5xyzの出発原料。</p>    
                                 </div>
-                                <p>SMILEScode: CC(C)(C)OC(=O)Nc2ccc(B1OC(C)(C)C(C)(C)O1)cc2</p>
+                                <p>SMILEScode: CC(C)(C)OC(=O)NC1CCNC1</p>
                             </div>
         
                         </div>
