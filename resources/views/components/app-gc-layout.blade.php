@@ -43,10 +43,10 @@
             document.getElementById("spinner").style.display = "block";
 
             setTimeout(() => {
-            const elements = document.querySelectorAll('input[type="submit"]', 'button[type="submit"]');
+            const elements = document.querySelectorAll('input[type="submit"], button[type="submit"]');
             elements.forEach(element => {
                 element.disabled = true;
-                
+                // element.style.display = 'none';
             });
             }, 0);
 

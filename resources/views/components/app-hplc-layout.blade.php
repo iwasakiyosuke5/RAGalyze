@@ -43,12 +43,12 @@
         document.getElementById("spinner").style.display = "block";
     
         setTimeout(() => {
-        const elements = document.querySelectorAll('input[type="submit"]', 'button[type="submit"]');
-        elements.forEach(element => {
-            element.disabled = true;
-            
-        });
-        }, 0);
+            const elements = document.querySelectorAll('input[type="submit"], button[type="submit"]');
+            elements.forEach(element => {
+                element.disabled = true;
+                // element.style.display = 'none'; //消す場合
+            });
+            }, 0);
 
         const navLinks = document.querySelectorAll('nav a, nav button');
         navLinks.forEach(link => {
